@@ -7,15 +7,15 @@ import 'package:tennis_hub/domain/models/tennis_court.dart';
 class DBImpl implements DBRepository {
   DBHelper database = DBHelper();
   @override
-  Future<bool> addReservation(Reservation reservation) {
-    // TODO: implement addReservation
-    throw UnimplementedError();
+  Future<bool> addReservation(Reservation reservation) async {
+    await database.insertReservation(reservation);
+    return true;
   }
 
   @override
-  Future<bool> deleteReservation(Reservation reservation) {
-    // TODO: implement deleteReservation
-    throw UnimplementedError();
+  Future<bool> deleteReservation(int id) async {
+    await database.deleteReservation(id);
+    return true;
   }
 
   @override
@@ -33,5 +33,18 @@ class DBImpl implements DBRepository {
     List<Map<String, dynamic>> rows = await database.getCourts();
     List<TennisCourt> courts = rows.map((e) => TennisCourt.fromMap(e)).toList();
     return courts;
+  }
+
+  @override
+  Future<bool> validateDateReservation(DateTime reservation) async {
+    // TODO: implement validateDateReservation
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<String>> getDateReservations() async {
+    List<String> result = await database.getDateReservations();
+
+    return result;
   }
 }

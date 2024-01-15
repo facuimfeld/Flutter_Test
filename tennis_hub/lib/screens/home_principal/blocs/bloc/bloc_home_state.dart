@@ -16,3 +16,7 @@ class ReservationsLoaded extends BlocHomeState {
   @override
   List<Object> get props => [reservs];
 }
+
+class ReservationSaved extends BlocHomeState {}
+
+class ReservationDeleted extends BlocHomeState {}

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:tennis_hub/data/data_sources/interfaces/weather.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,10 +19,19 @@ class Weather implements WeatherInt {
     var resp = await http.get(Uri.parse(urlApi), headers: {
       'Content-Type': 'application/json',
     });
+    //print('resp1' + resp.body.toString());
+    //print('date ' + date);
     if (resp.statusCode == 200) {
       Map<String, dynamic> result = json.decode(utf8.decode(resp.bodyBytes));
-      List<Map<String, dynamic>> weatherByHour =
-          result["forecast"]["forecastday"][0]["hour"];
+      List<dynamic> hours = result["forecast"]["forecastday"][0]["hour"];
+
+      for (int i = 0; i <= hours.length - 1; i++) {
+        probabilityRain = probabilityRain +
+            double.parse(hours[i]["chance_of_rain"].toString());
+      }
+
+      probabilityRain = probabilityRain / hours.length;
+      // print(result["forecast"]["forecastday"][0]["hour"].toString());
     }
     return probabilityRain;
   }

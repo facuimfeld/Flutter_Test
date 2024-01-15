@@ -3,7 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_hub/data/data_sources/implementations/db/db_helper.dart';
-import 'package:tennis_hub/screens/dialog_add_court/blocs/bloc/bloc_court_bloc.dart';
+import 'package:tennis_hub/screens/dialog_add_reservation/bloc_date/bloc_date_bloc.dart';
+
+import 'package:tennis_hub/screens/dialog_add_reservation/bloc_weather/weather_bloc_bloc.dart';
+import 'package:tennis_hub/screens/dialog_add_reservation/blocs/bloc/bloc_court_bloc.dart';
+
 import 'package:tennis_hub/screens/home_principal/blocs/bloc/bloc_home_bloc.dart';
 import 'package:tennis_hub/screens/home_principal/home_principal.dart';
 
@@ -37,6 +41,8 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<BlocHomeBloc>(create: (context) => BlocHomeBloc()),
           BlocProvider<BlocCourtBloc>(create: (context) => BlocCourtBloc()),
+          BlocProvider<WeatherBlocBloc>(create: (context) => WeatherBlocBloc()),
+          BlocProvider<BlocDateBloc>(create: (context) => BlocDateBloc()),
         ],
         child: MaterialApp(
             debugShowCheckedModeBanner: false,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tennis_hub/data/repositories/db_repository.dart';
 import 'package:tennis_hub/domain/models/reservation.dart';
 import 'package:tennis_hub/domain/models/tennis_court.dart';
 
@@ -12,6 +14,20 @@ class DBHelper {
   final String _nameTable2 = 'Reservations';
   final int _version = 1;
   bool databaseCreated = false;
+
+  Future<bool> insertReservation(Reservation reservation) async {
+    Map<String, dynamic> res = reservation.toMap();
+    res["idCourt"] = await getIdCourt(reservation.court.name);
+    String formattedDateString =
+        DateFormat('yyyy-MM-dd').format(res["dateReservation"]);
+    res["dateReservation"] = formattedDateString;
+    await datab.insert(
+      _nameTable2,
+      res,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return true;
+  }
 
   Future<void> initDB() async {
     try {
@@ -41,13 +57,28 @@ class DBHelper {
           CREATE TABLE $_nameTable2(
             idReservation INTEGER PRIMARY KEY,
             user VARCHAR(50) NOT NULL,
-            dateReservation DATETIME NOT NULL,
+            dateReservation TEXT NOT NULL,
             idCourt INTEGER NOT NULL,
             FOREIGN KEY(idCourt) REFERENCES Court(id)
           )
           ''');
 
     databaseCreated = true;
+  }
+
+  Future<int> getIdCourt(String nameCourt) async {
+    final List<Map<String, dynamic>> maps = await datab.query(
+      _nameTable1,
+      columns: ['idCourt'], // Solo necesitas la columna 'id'
+      where: 'name = ?',
+      whereArgs: [nameCourt],
+    );
+
+    if (maps.isNotEmpty) {
+      return maps.first['idCourt'] as int;
+    } else {
+      return 0;
+    }
   }
 
   Future<void> insertCourts() async {
@@ -80,7 +111,7 @@ class DBHelper {
   Future<List<Map<String, dynamic>>> getReservs() async {
     List<Map<String, dynamic>> list = [];
     list = await datab.rawQuery(
-        'SELECT c.name, c.photoUrl, r.dateReservation,c.lights,r.user FROM Court c INNER JOIN Reservations r ON c.idCourt = r.idCourt');
+        'SELECT r.idReservation,c.name, c.photoUrl, r.dateReservation,c.lights,r.user FROM Court c INNER JOIN Reservations r ON c.idCourt = r.idCourt');
 
     return list;
   }
@@ -90,5 +121,30 @@ class DBHelper {
     list = await datab.query('Court');
 
     return list;
+  }
+
+  Future<List<String>> getDateReservations() async {
+    // Realizar la consulta SQL
+    List<Map<String, dynamic>> result = await datab.rawQuery('''
+    SELECT dateReservation, COUNT(*) as reservationCount
+    FROM $_nameTable2
+    GROUP BY dateReservation
+    HAVING reservationCount = 3
+  ''');
+
+    // Mapear la lista de mapas a una lista de cadenas de fechas
+    List<String> dateList = result.map((map) {
+      // Asumiendo que la clave 'dateReservation' contiene las fechas en formato 'yyyy-MM-dd'
+      return map['dateReservation'] as String;
+    }).toList();
+
+    return dateList;
+  }
+
+  // Ejemplo de función para borrar un registro por ID
+  Future<void> deleteReservation(int id) async {
+    // Borra el registro principal
+    await datab
+        .delete(_nameTable2, where: 'idReservation = ?', whereArgs: [id]);
   }
 }

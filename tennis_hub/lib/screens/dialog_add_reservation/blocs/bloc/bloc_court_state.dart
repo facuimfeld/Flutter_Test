@@ -16,3 +16,14 @@ class CourtsLoaded extends BlocCourtState {
   @override
   List<Object> get props => [courts];
 }
+
+class DatesAvailables extends BlocCourtState {
+  List<DateTime> datesReserved = [];
+
+  DatesAvailables(this.datesReserved);
+
+  @override
+  List<Object> get props => [datesReserved];
+}
+
+class ReservationSaved extends BlocCourtState {}

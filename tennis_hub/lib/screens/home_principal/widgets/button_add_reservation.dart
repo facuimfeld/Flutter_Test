@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:tennis_hub/screens/dialog_add_court/dialog_add_court.dart';
+import 'package:tennis_hub/screens/dialog_add_reservation/dialog_add_court.dart';
 
 class ButtonAddReservation extends StatelessWidget {
   const ButtonAddReservation({super.key});
