@@ -7,6 +7,7 @@ part 'weather_bloc_state.dart';
 
 class WeatherBlocBloc extends Bloc<WeatherBlocEvent, WeatherBlocState> {
   Weather w = Weather();
+
   WeatherBlocBloc() : super(WeatherBlocInitial()) {
     on<CalculateProbability>((event, emit) async {
       try {

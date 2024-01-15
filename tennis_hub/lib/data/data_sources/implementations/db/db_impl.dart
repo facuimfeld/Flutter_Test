@@ -36,12 +36,6 @@ class DBImpl implements DBRepository {
   }
 
   @override
-  Future<bool> validateDateReservation(DateTime reservation) async {
-    // TODO: implement validateDateReservation
-    throw UnimplementedError();
-  }
-
-  @override
   Future<List<String>> getDateReservations() async {
     List<String> result = await database.getDateReservations();
 

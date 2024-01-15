@@ -15,7 +15,6 @@ class Reservation {
       required this.probabilityRain});
 
   factory Reservation.fromJson(Map<String, dynamic> json) {
-    print('js' + json.toString());
     TennisCourt court = TennisCourt(
         name: json["name"],
         photoUrl: json["photoUrl"],

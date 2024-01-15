@@ -8,8 +8,6 @@ abstract class DBRepository {
 
   Future<List<TennisCourt>> getCourts();
 
-  Future<bool> validateDateReservation(DateTime reservation);
-
   Future<List<String>> getDateReservations();
 
   Future<void> deleteReservation(int id);

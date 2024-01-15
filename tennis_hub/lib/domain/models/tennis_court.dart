@@ -26,11 +26,6 @@ class TennisCourt {
   }
 
   factory TennisCourt.fromMap(Map<String, dynamic> json) {
-    /*
-   name VARCHAR(15) NOT NULL,
-            photoUrl TEXT NOT NULL,
-            lights CHAR(1) NOT NULL
-    */
     return TennisCourt(
         name: json["name"],
         photoUrl: json["photoUrl"],

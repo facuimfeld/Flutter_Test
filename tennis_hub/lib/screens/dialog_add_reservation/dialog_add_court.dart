@@ -1,10 +1,11 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_hub/domain/models/reservation.dart';
 import 'package:tennis_hub/domain/models/tennis_court.dart';
 import 'package:tennis_hub/screens/dialog_add_reservation/bloc_date/bloc_date_bloc.dart';
 import 'package:tennis_hub/screens/dialog_add_reservation/blocs/bloc/bloc_court_bloc.dart';
-import 'package:tennis_hub/screens/dialog_add_reservation/widgets/field_select_date.dart';
+
 import 'package:tennis_hub/screens/dialog_add_reservation/widgets/field_user.dart';
 import 'package:tennis_hub/screens/dialog_add_reservation/widgets/photo_url.dart';
 import 'package:tennis_hub/screens/dialog_add_reservation/widgets/probability_rain.dart';
@@ -29,7 +30,7 @@ class _DialogAddCourtState extends State<DialogAddCourt> {
     super.initState();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     DateTime selectedDate = DateTime.now();
 
     final DateTime? pickedDate = await showDatePicker(
@@ -42,17 +43,15 @@ class _DialogAddCourtState extends State<DialogAddCourt> {
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
         dateReservation = pickedDate;
-        dateSelectedController.text = dateReservation!.day.toString() +
-            '\/' +
-            dateReservation!.month.toString() +
-            '\/' +
-            dateReservation!.year.toString();
+        dateSelectedController.text =
+            '${dateReservation!.day}\/${dateReservation!.month}\/${dateReservation!.year}';
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    //Cargamos las canchas disponibles
     context.read<BlocCourtBloc>().add(LoadCourts());
 
     return AlertDialog(
@@ -72,123 +71,126 @@ class _DialogAddCourtState extends State<DialogAddCourt> {
                 BlocBuilder<BlocCourtBloc, BlocCourtState>(
                   builder: (context, state) {
                     if (state is CourtsLoaded) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: state.courts.length,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        switch (index) {
-                                          case 0:
-                                            setState(() {
-                                              indexSelect = 0;
-                                              courtSelected = state.courts[0];
-                                            });
-                                            break;
-                                          case 1:
-                                            setState(() {
-                                              indexSelect = 1;
-                                              courtSelected = state.courts[1];
-                                            });
-                                            break;
-                                          case 2:
-                                            setState(() {
-                                              indexSelect = 2;
-                                              courtSelected = state.courts[2];
-                                            });
-                                            break;
-                                        }
-                                      },
-                                      child: Container(
-                                        width: 270,
-                                        height: 70,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: indexSelect == index
-                                                ? Colors.blue
-                                                : Colors.grey,
-                                            width: 1.4,
+                      return FadeInUp(
+                        duration: const Duration(milliseconds: 400),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: state.courts.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          switch (index) {
+                                            case 0:
+                                              setState(() {
+                                                indexSelect = 0;
+                                                courtSelected = state.courts[0];
+                                              });
+                                              break;
+                                            case 1:
+                                              setState(() {
+                                                indexSelect = 1;
+                                                courtSelected = state.courts[1];
+                                              });
+                                              break;
+                                            case 2:
+                                              setState(() {
+                                                indexSelect = 2;
+                                                courtSelected = state.courts[2];
+                                              });
+                                              break;
+                                          }
+                                        },
+                                        child: Container(
+                                          width: 270,
+                                          height: 70,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: indexSelect == index
+                                                  ? Colors.blue
+                                                  : Colors.grey,
+                                              width: 1.4,
+                                            ),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(10.0),
+                                            ),
                                           ),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(10.0),
+                                          child: Center(
+                                            child: ListTile(
+                                                title: Text(
+                                                    state.courts[index].name,
+                                                    style: const TextStyle(
+                                                        fontSize: 13.0)),
+                                                subtitle: state.courts[index]
+                                                            .lights ==
+                                                        true
+                                                    ? const Text(
+                                                        'Con iluminacion',
+                                                        style: TextStyle(
+                                                            fontSize: 13.0))
+                                                    : const Text(
+                                                        'Sin iluminacion',
+                                                        style: TextStyle(
+                                                            fontSize: 13.0)),
+                                                leading: PhotoUrl(state
+                                                    .courts[index].photoUrl)),
                                           ),
                                         ),
-                                        child: Center(
-                                          child: ListTile(
-                                              title: Text(
-                                                  state.courts[index].name,
-                                                  style: const TextStyle(
-                                                      fontSize: 13.0)),
-                                              subtitle: state.courts[index]
-                                                          .lights ==
-                                                      true
-                                                  ? const Text(
-                                                      'Con iluminacion',
-                                                      style: TextStyle(
-                                                          fontSize: 13.0))
-                                                  : const Text(
-                                                      'Sin iluminacion',
-                                                      style: TextStyle(
-                                                          fontSize: 13.0)),
-                                              leading: PhotoUrl(state
-                                                  .courts[index].photoUrl)),
+                                      ),
+                                      const SizedBox(height: 5.0),
+                                    ],
+                                  );
+                                }),
+                            const SizedBox(height: 10.0),
+                            GestureDetector(
+                              onTap: () {
+                                selectDate(context);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(15),
+                                height: 90,
+                                child: Center(
+                                  child:
+                                      BlocBuilder<BlocDateBloc, BlocDateState>(
+                                    builder: (context, state) {
+                                      return TextFormField(
+                                        validator: (val) {
+                                          if (state is DateValid) {
+                                            return null;
+                                          }
+                                          return "Maximo de reservas alcanzadas";
+                                        },
+                                        controller: dateSelectedController,
+                                        decoration: InputDecoration(
+                                          icon:
+                                              const Icon(Icons.calendar_today),
+                                          labelText: "Seleccionar fecha",
+                                          contentPadding:
+                                              const EdgeInsets.only(top: 8),
+                                          suffixIcon: dateReservation == null
+                                              ? const Text('')
+                                              : ProbabilityRain(
+                                                  dateReservation!),
                                         ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5.0),
-                                  ],
-                                );
-                              }),
-                          const SizedBox(height: 10.0),
-                          // const Text('Fecha de Reserva',
-                          //          style: TextStyle(fontSize: 13.0)),
-                          GestureDetector(
-                            onTap: () {
-                              _selectDate(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(15),
-                              height: 90,
-                              child: Center(
-                                child: BlocBuilder<BlocDateBloc, BlocDateState>(
-                                  builder: (context, state) {
-                                    return TextFormField(
-                                      validator: (val) {
-                                        print('state5:' + state.toString());
-                                        if (state is DateValid) {
-                                          return null;
-                                        }
-                                        return "Maximo de reservas alcanzadas";
-                                      },
-                                      controller: dateSelectedController,
-                                      decoration: InputDecoration(
-                                        icon: const Icon(Icons.calendar_today),
-                                        labelText: "Seleccionar fecha",
-                                        contentPadding: const EdgeInsets.only(
-                                            top: 8), // Ajusta aquí
-                                        suffixIcon: dateReservation == null
-                                            ? const Text('')
-                                            : ProbabilityRain(dateReservation!),
-                                      ),
-                                      readOnly: true,
-                                      onTap: () async {
-                                        _selectDate(context);
-                                      },
-                                    );
-                                  },
+                                        readOnly: true,
+                                        onTap: () async {
+                                          selectDate(context);
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-
-                          FieldUser(user: user),
-                        ],
+                            FieldUser(user: user),
+                          ],
+                        ),
                       );
                     }
                     return const CircularProgressIndicator();
@@ -200,13 +202,11 @@ class _DialogAddCourtState extends State<DialogAddCourt> {
       actions: [
         ElevatedButton(
           onPressed: () async {
-            // Validación asíncrona del BlocDateBloc
+            // Validamos disponibilidad de reservas en la fecha elegida
             BlocProvider.of<BlocDateBloc>(context)
                 .add(ValidateDate(dateReservation!));
 
-            // Esperar a que la validación asíncrona se complete
-            await Future.delayed(Duration(
-                milliseconds: 100)); // Ajusta el tiempo según sea necesario
+            await Future.delayed(const Duration(milliseconds: 100));
 
             // Validar el formulario después de la validación asíncrona
             if (_formKey.currentState!.validate()) {
@@ -216,6 +216,7 @@ class _DialogAddCourtState extends State<DialogAddCourt> {
                   court: courtSelected,
                   user: user.text,
                   probabilityRain: 0.0);
+              //Si la fecha y el form son validos agregamos reserva
               BlocProvider.of<BlocHomeBloc>(context)
                   .add(AddReservation(reserv));
             }

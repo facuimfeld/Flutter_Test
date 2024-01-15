@@ -1,5 +1,5 @@
 import 'package:tennis_hub/domain/models/reservation.dart';
-
+/*
 abstract class ReservationsInt {
   Future<List<Reservation>> getReservations();
 
@@ -7,3 +7,4 @@ abstract class ReservationsInt {
 
   Future<bool> deleteReservation(Reservation reservation);
 }
+*/

@@ -41,6 +41,7 @@ dependencies:
   animate_do:
   flutter_bloc:
   equatable:
+
   intl:
   path:
   path_provider:

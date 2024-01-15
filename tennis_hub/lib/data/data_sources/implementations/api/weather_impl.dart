@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/widgets.dart';
 import 'package:tennis_hub/data/data_sources/interfaces/weather.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,8 +18,7 @@ class Weather implements WeatherInt {
     var resp = await http.get(Uri.parse(urlApi), headers: {
       'Content-Type': 'application/json',
     });
-    //print('resp1' + resp.body.toString());
-    //print('date ' + date);
+
     if (resp.statusCode == 200) {
       Map<String, dynamic> result = json.decode(utf8.decode(resp.bodyBytes));
       List<dynamic> hours = result["forecast"]["forecastday"][0]["hour"];
@@ -29,9 +27,8 @@ class Weather implements WeatherInt {
         probabilityRain = probabilityRain +
             double.parse(hours[i]["chance_of_rain"].toString());
       }
-
+      //Se calcula una probabilidad promedio a lo largo de las horas del dia elegido. La Api elegida permite ver la probabilidad de lluvia por hora
       probabilityRain = probabilityRain / hours.length;
-      // print(result["forecast"]["forecastday"][0]["hour"].toString());
     }
     return probabilityRain;
   }

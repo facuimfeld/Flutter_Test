@@ -15,6 +15,7 @@ class DBHelper {
   final int _version = 1;
   bool databaseCreated = false;
 
+  //Insertar reservacion
   Future<bool> insertReservation(Reservation reservation) async {
     Map<String, dynamic> res = reservation.toMap();
     res["idCourt"] = await getIdCourt(reservation.court.name);
@@ -29,6 +30,7 @@ class DBHelper {
     return true;
   }
 
+  //Inicializar base de datos
   Future<void> initDB() async {
     try {
       final documentsDirectory = await getApplicationDocumentsDirectory();
@@ -38,12 +40,13 @@ class DBHelper {
     } catch (ex) {
       print('error init' + ex.toString());
     }
-
+    //Si la base de datos fue recien creada se insertan canchas, caso contrario se omite la insercion
     if (databaseCreated) {
       await insertCourts();
     }
   }
 
+  //Crear tablas en sqflite
   Future _createDB(Database db, int version) async {
     await db.execute('''
           CREATE TABLE $_nameTable1(
@@ -66,10 +69,11 @@ class DBHelper {
     databaseCreated = true;
   }
 
+  //Obtener ID de cancha por su nombre
   Future<int> getIdCourt(String nameCourt) async {
     final List<Map<String, dynamic>> maps = await datab.query(
       _nameTable1,
-      columns: ['idCourt'], // Solo necesitas la columna 'id'
+      columns: ['idCourt'],
       where: 'name = ?',
       whereArgs: [nameCourt],
     );
@@ -81,6 +85,7 @@ class DBHelper {
     }
   }
 
+  //Insertar canchas a sqflite
   Future<void> insertCourts() async {
     List<TennisCourt> courts = [
       TennisCourt(
@@ -108,6 +113,7 @@ class DBHelper {
     }
   }
 
+  //Obtener reservas almacenadas
   Future<List<Map<String, dynamic>>> getReservs() async {
     List<Map<String, dynamic>> list = [];
     list = await datab.rawQuery(
@@ -116,6 +122,7 @@ class DBHelper {
     return list;
   }
 
+  //Obtener canchas cargadas
   Future<List<Map<String, dynamic>>> getCourts() async {
     List<Map<String, dynamic>> list = [];
     list = await datab.query('Court');
@@ -123,6 +130,7 @@ class DBHelper {
     return list;
   }
 
+  //Obtener fechas de reservaciones que hayan llegado al limite de reservas
   Future<List<String>> getDateReservations() async {
     // Realizar la consulta SQL
     List<Map<String, dynamic>> result = await datab.rawQuery('''
@@ -134,16 +142,14 @@ class DBHelper {
 
     // Mapear la lista de mapas a una lista de cadenas de fechas
     List<String> dateList = result.map((map) {
-      // Asumiendo que la clave 'dateReservation' contiene las fechas en formato 'yyyy-MM-dd'
       return map['dateReservation'] as String;
     }).toList();
 
     return dateList;
   }
 
-  // Ejemplo de función para borrar un registro por ID
+  //Borramos reserva por su id
   Future<void> deleteReservation(int id) async {
-    // Borra el registro principal
     await datab
         .delete(_nameTable2, where: 'idReservation = ?', whereArgs: [id]);
   }
