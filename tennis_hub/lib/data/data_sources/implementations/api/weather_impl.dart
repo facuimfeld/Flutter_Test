@@ -13,6 +13,9 @@ class Weather implements WeatherInt {
     String date = '${time.year}-${time.month}-${time.day}';
     String hour = '${time.hour}:${time.minute}';
 
+    /*
+    La api elegida tiene la limitacion de mostrar informacion del tiempo para 14 dias o mas posteriores a la fecha actual
+    */
     String urlApi =
         'https://api.weatherapi.com/v1/future.json?key=ff9f1d69ea0843b18f8182710241201&q=Resistencia&dt=$date';
     var resp = await http.get(Uri.parse(urlApi), headers: {
